@@ -6,6 +6,9 @@
     <style>
         body {
             background: #000;
+            margin:0;
+            padding:0;
+            overflow:hidden;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.11.3/lib/p5.js"></script>
@@ -16,6 +19,9 @@
         var w = window.innerWidth;
         var h = window.innerHeight;
         var scalefactor = 20
+        var rotate = 0;
+        var rotateAngle = 0;
+        var colored = 1;
         
         //let primes = generatePrimes(1000000);
         let primeGenerator = createPrimeGenerator();
@@ -78,6 +84,16 @@
                 mousePressed.last = millis();
             }
         }
+
+        function keyPressed(event) {
+            if (event.key.toUpperCase() === 'R') {
+                rotate = !rotate;
+            }
+
+            if (event.key.toUpperCase() === 'C') {
+                colored = !colored;
+            }
+        }
         
         function draw() {
             // Option 1: Exponential scaling
@@ -105,8 +121,24 @@
             let liststart = Math.floor(frameCount/30);
             let listend = frameCount*15;
 
-            primes.slice(liststart,listend).forEach(i => {
-                polarEllipse(i * (180 / Math.PI), 1*scalefactor, 1*scalefactor, i);
+            if (rotate) {
+                rotateAngle += .05;
+            }
+            primes.slice(liststart,listend).forEach((prime, idx) => {
+                
+                if(colored) {
+                    // Calculate hue based on the prime number
+                    // Use modulo 360 to keep hue within valid range
+                    let hue = 360 * idx / (listend-liststart);
+                    // Convert HSL to RGB since p5.js uses RGB
+                    colorMode(HSL);
+                    fill(hue, 100, 50);
+                } else {
+                    fill(255);
+                }
+
+                noStroke();
+                polarEllipse((prime * (180 / Math.PI) + rotateAngle) % 360, 1*scalefactor, 1*scalefactor, prime);
             });
             // Reset the transform matrix to draw text in absolute coordinates
             push();
