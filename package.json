@@ -1,0 +1,15 @@
+{
+  "name": "primepolar",
+  "version": "0.1.0",
+  "description": "Prime number visualization using p5.js and p5.Polar",
+  "main": "index.js",
+  "scripts": {
+    "start": "http-server public"
+  },
+  "keywords": ["visualization", "primes", "p5js"],
+  "author": "Arnaud Soyez <arnaud@codealpha.net>",
+  "license": "ISC",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>title</title>
+    <style>
+        body {
+            background: #000;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.3/lib/p5.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/liz-peng/p5.Polar@latest/p5.Polar.js"></script>
+</head>
+<body>
+    <script>
+        var w = window.innerWidth;
+        var h = window.innerHeight;
+        var scalefactor = 20
+        
+        //let primes = generatePrimes(1000000);
+        let primeGenerator = createPrimeGenerator();
+        let primes = [];
+        
+        function setup() {
+            createCanvas(w, h);
+        }
+        
+        // Generate primes up to n
+        function generatePrimes(n) {
+            let primes = [];
+            let isPrime = new Array(n).fill(true);
+            isPrime[0] = isPrime[1] = false;
+            for(let i = 2; i < n; i++) {
+                if(isPrime[i]) {
+                    primes.push(i);
+                    for(let j = i*i; j < n; j += i) {
+                        isPrime[j] = false;
+                    }
+                }
+            }
+            return primes;
+        }
+        
+        function* createPrimeGenerator() {
+            let candidates = [2];
+            let n = 3;
+            
+            yield 2; // First prime
+            
+            while (true) {
+                if (isPrime(n, candidates)) {
+                    candidates.push(n);
+                    yield n;
+                }
+                n += 2; // Skip even numbers
+            }
+        }
+        
+        function isPrime(num, knownPrimes) {
+            let sqrt = Math.sqrt(num);
+            for (let prime of knownPrimes) {
+                if (prime > sqrt) break;
+                if (num % prime === 0) return false;
+            }
+            return true;
+        }
+        
+        function getNextPrime() {
+            return primeGenerator.next().value;
+        }
+        
+        function mousePressed() {
+            if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+                if (mousePressed.last && millis() - mousePressed.last < 300) {
+                    let fs = fullscreen();
+                    fullscreen(!fs);
+                }
+                mousePressed.last = millis();
+            }
+        }
+        
+        function draw() {
+            // Option 1: Exponential scaling
+            //scalefactor = Math.pow(1.08, frameCount/10);
+            
+            // OR Option 2: Quadratic scaling
+            // scalefactor = (frameCount/10) * (frameCount/10);
+            
+            // OR Option 3: Logarithmic scaling
+            // scalefactor = Math.log(frameCount + 1) * 10;
+            
+            // OR Option 4: Linear scaling
+            scalefactor = frameCount/10;
+
+            setCenter(width/2, height/2);
+            scale(1/scalefactor)
+            background(0);
+            fill(255);
+            noStroke();
+            let lastPrime = 0;
+            for(let i = 0; i < 50; i++) {
+                lastPrime = getNextPrime();
+                primes.push(lastPrime);
+            }
+            let liststart = Math.floor(frameCount/30);
+            let listend = frameCount*15;
+
+            primes.slice(liststart,listend).forEach(i => {
+                polarEllipse(i * (180 / Math.PI), 1*scalefactor, 1*scalefactor, i);
+            });
+            // Reset the transform matrix to draw text in absolute coordinates
+            push();
+            resetMatrix();
+            textSize(16);
+            fill(255);
+            text(`Primes: ${primes.length} | biggest: ${lastPrime} | scale: 1/${scalefactor} | drawn: ${listend-liststart}`, 10, 20);  // This will appear in top-left corner
+            pop();  // Restore the previous transform
+        }
+        
+        window.onresize = function() {
+            w = window.innerWidth;
+            h = window.innerHeight;
+            resizeCanvas(w, h);
+        }
+    </script>
+</body>
+</html>
