@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>title</title>
+    <title>Prime number visualization in polar coordinates</title>
     <style>
         body {
             background: #000;
@@ -22,15 +22,15 @@
         var rotate = 0;
         var rotateAngle = 0;
         var colored = 1;
-        
+
         //let primes = generatePrimes(1000000);
         let primeGenerator = createPrimeGenerator();
         let primes = [];
-        
+
         function setup() {
             createCanvas(w, h);
         }
-        
+
         // Generate primes up to n
         function generatePrimes(n) {
             let primes = [];
@@ -46,13 +46,13 @@
             }
             return primes;
         }
-        
+
         function* createPrimeGenerator() {
             let candidates = [2];
             let n = 3;
-            
+
             yield 2; // First prime
-            
+
             while (true) {
                 if (isPrime(n, candidates)) {
                     candidates.push(n);
@@ -61,7 +61,7 @@
                 n += 2; // Skip even numbers
             }
         }
-        
+
         function isPrime(num, knownPrimes) {
             let sqrt = Math.sqrt(num);
             for (let prime of knownPrimes) {
@@ -70,11 +70,11 @@
             }
             return true;
         }
-        
+
         function getNextPrime() {
             return primeGenerator.next().value;
         }
-        
+
         function mousePressed() {
             if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
                 if (mousePressed.last && millis() - mousePressed.last < 300) {
@@ -94,17 +94,17 @@
                 colored = !colored;
             }
         }
-        
+
         function draw() {
             // Option 1: Exponential scaling
             //scalefactor = Math.pow(1.08, frameCount/10);
-            
+
             // OR Option 2: Quadratic scaling
             // scalefactor = (frameCount/10) * (frameCount/10);
-            
+
             // OR Option 3: Logarithmic scaling
             // scalefactor = Math.log(frameCount + 1) * 10;
-            
+
             // OR Option 4: Linear scaling
             scalefactor = frameCount/10;
 
@@ -125,7 +125,7 @@
                 rotateAngle += .05;
             }
             primes.slice(liststart,listend).forEach((prime, idx) => {
-                
+
                 if(colored) {
                     // Calculate hue based on the prime number
                     // Use modulo 360 to keep hue within valid range
@@ -148,7 +148,7 @@
             text(`Primes: ${primes.length} | biggest: ${lastPrime} | scale: 1/${scalefactor} | drawn: ${listend-liststart}`, 10, 20);  // This will appear in top-left corner
             pop();  // Restore the previous transform
         }
-        
+
         window.onresize = function() {
             w = window.innerWidth;
             h = window.innerHeight;

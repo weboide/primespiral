@@ -1,7 +1,7 @@
 {
   "name": "primepolar",
   "version": "0.1.0",
-  "description": "Prime number visualization using p5.js and p5.Polar",
+  "description": "Prime number visualization in polar coordinates",
   "main": "index.js",
   "scripts": {
     "start": "http-server public"
